@@ -14,7 +14,7 @@ interface HomeProps {
 
 export async function getStaticProps() {
   
-  const maxPokemons = 251;
+  const maxPokemons = 250;
   const api = 'https://pokeapi.co/api/v2/pokemon/';
 
   try {
