@@ -2,8 +2,8 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['cdn.traction.one.pokedex'],
+    domains: ['cdn.traction.one'],
   },
-};
+}
 
 export default nextConfig;
