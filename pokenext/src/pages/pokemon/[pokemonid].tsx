@@ -1,4 +1,6 @@
 import { GetStaticPaths, GetStaticProps } from "next";
+import Image from "next/image";
+//import styles from '../../styles/Pokemon.module.css'
 
 export const getStaticPaths: GetStaticPaths = async() => {
     const maxPokemons = 250;
@@ -11,25 +13,43 @@ export const getStaticPaths: GetStaticPaths = async() => {
         }
         const data = await res.json()
 
-        //params
-        const paths = data.results.map((index: number) => {
-            return {
-                params: {pokemonId: (index+1).toString() },
-            }
-        })
+        const paths = data.results.map((pokemon: {name: string}, index: number) => ({
+                params: { pokemonId: (index + 1).toString() },
+        }));
+        console.log(paths)
 
         return {
             paths,
             fallback: false,
         };
-    }catch (error) {
+    } catch (error) {
         console.error(error);
         return {
             paths: [],
             fallback: false,
         };
     }
+    
 };
+
+interface PokemonType {
+    type: {
+        name: string;
+    };
+}
+interface PokemonProps {
+    pokemon: {
+        id: string;
+        name: string;
+        types: PokemonType[];
+        height: number;
+        weight: number;
+
+        
+    };
+}
+
+
 
 export const getStaticProps: GetStaticProps = async(context) => {
     const id = context.params?.pokemonId;
@@ -41,9 +61,24 @@ export const getStaticProps: GetStaticProps = async(context) => {
         }
 
         const data = await res.json();
+        console.log(data);
 
+        if(!data.types || !Array.isArray(data.types)) {
+            return {
+                notFound: true
+            };
+        }
+        
+        const pokemon = {
+            id: data.id,
+            name: data.name,
+            types: data.types,
+            height: data.height,
+            weight: data.weight,
+        };
+        
         return {
-            props: { pokemon: data },
+            props: { pokemon },
         };
     } catch (error) {
         console.error(error);
@@ -53,18 +88,42 @@ export const getStaticProps: GetStaticProps = async(context) => {
     }
 };
 
-interface PokemonProps {
-    pokemon: {
-        name: string;
-        // Adicione mais propriedades conforme necessário
-    };
-}
 
-export default function Pokemon( {pokemon}: PokemonProps ){
+export default function Pokemon({pokemon}: PokemonProps ){
     return(
         <div>
             <h1>{pokemon.name}</h1>
-            <p>Testando</p>
+            <Image 
+            src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`}
+            width="200"                    
+            height="200"
+            alt={pokemon.name}/>
+            <div>
+                <h3>Número:</h3>
+                <p>#{pokemon.id}</p>
+            </div>
+                <div>
+                 <h3>Tipo:</h3>
+                <div>
+                    {Array.isArray(pokemon.types) && pokemon.types.length > 0 ? (
+                        pokemon.types.map((item: PokemonType, index: number) => (
+                            <span key={index}>{item.type.name}</span>
+                        ))
+                    ) : (
+                        <p>Tipo nao disponivel</p>
+                    )}
+                </div>
+            </div>
+            <div>
+                <div>
+                    <h4>Altura:</h4>
+                    <p>{pokemon.height * 10} cm</p>
+                </div>
+                <div>
+                    <h4>Peso:</h4>
+                    <p>{pokemon.weight / 10} kg</p>
+                </div>
+            </div>
         </div>
     );
 }

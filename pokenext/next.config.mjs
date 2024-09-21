@@ -1,9 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  images: {
-    domains: ['cdn.traction.one', 'raw.githubusercontent.com'],
-  },
-}
+  reactStrictMode: true, 
+    images: {
+      remotePatterns: [
+        {
+          protocol: 'https',
+          hostname: 'raw.githubusercontent.com',
+          pathname: '/PokeAPI/**',
+        },
+      ],  
+    },
+};
 
 export default nextConfig;

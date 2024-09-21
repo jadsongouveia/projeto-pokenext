@@ -13,7 +13,7 @@ export default function Layout({children}: LayoutProps){
         <>
         <Head>
             <link rel="shorcut icon" href="/images/favicon.ico"/>
-            <title>Pokenext</title>
+            <title>PokeNext</title>
         </Head>
         <Navbar />
         <main className="main-container">{children}</main>
